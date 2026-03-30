@@ -100,8 +100,8 @@ canvas{display:block;width:100%;height:100%}
   <span style="font-size:11px;font-weight:500;color:var(--tx2);white-space:nowrap">Caso activo:</span>
   <div class="ctabs" id="ctabs">
     <div style="display:inline-flex;align-items:center;gap:3px">
-      <div class="ctab on" onclick="selCaso('caso_1774646779053')">Hombre araña</div>
-      <div class="cdel" onclick="delCaso('caso_1774646779053',event)" title="Eliminar caso">x</div>
+      <div class="ctab on" onclick="selCaso('caso_1774842698680')">Prueba</div>
+      <div class="cdel" onclick="delCaso('caso_1774842698680',event)" title="Eliminar caso">x</div>
     </div></div>
   <button class="bb" onclick="nuevoCaso()">+ Nuevo caso</button>
 </div>
@@ -109,11 +109,11 @@ canvas{display:block;width:100%;height:100%}
 <!-- STATS -->
 <div class="stats">
   <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="se">2</span><span class="sl">emp. Nirsa</span></div><div class="vs"></div>
-  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="sfin" style="color:#534AB7">2</span><span class="sl">fam. internos</span></div><div class="vs"></div>
+  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="sfin" style="color:#534AB7">0</span><span class="sl">fam. internos</span></div><div class="vs"></div>
   <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="sfex" style="color:#27500A">0</span><span class="sl">fam. externos</span></div><div class="vs"></div>
-  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="ss" style="color:#712B13">1</span><span class="sl">sospechosos</span></div><div class="vs"></div>
-  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="slnk">2</span><span class="sl">vinculos</span></div><div class="vs"></div>
-  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="shi" style="color:#E24B4A">1</span><span class="sl">riesgo alto</span></div>
+  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="ss" style="color:#712B13">0</span><span class="sl">sospechosos</span></div><div class="vs"></div>
+  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="slnk">1</span><span class="sl">vinculos</span></div><div class="vs"></div>
+  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="shi" style="color:#E24B4A">0</span><span class="sl">riesgo alto</span></div>
 </div>
 
 <!-- TOOLBAR -->
@@ -130,7 +130,7 @@ canvas{display:block;width:100%;height:100%}
 <!-- BODY -->
 <div class="body">
   <div class="sidebar">
-    <div class="sbh">Personas (<span id="nc">5</span>)</div>
+    <div class="sbh">Personas (<span id="nc">2</span>)</div>
     <div class="sbf">
       <div class="sf on" id="fa" onclick="setF('all')">Todos</div>
       <div class="sf" id="fe" onclick="setF('emp')">Nirsa</div>
@@ -138,32 +138,20 @@ canvas{display:block;width:100%;height:100%}
       <div class="sf" id="fx" onclick="setF('fex')">F.Ext</div>
       <div class="sf" id="fss" onclick="setF('ext')">Sosp.</div>
     </div>
-    <div class="nl" id="nl"><div class="nr on" onclick="selN(1)">
+    <div class="nl" id="nl"><div class="nr" onclick="selN(1)">
+      <div class="si2" style="background:#E6F1FB;color:#0C447C;border:2px solid #378ADD">CA</div>
+      <div class="ni"><div class="nn">Carlos Arana</div><div class="ns">Empleado Nirsa</div></div>
+      <div class="rd" style="background:#639922"></div>
+    </div><div class="nr on" onclick="selN(2)">
       <div class="si2" style="background:#E6F1FB;color:#0C447C;border:2px solid #378ADD">LF</div>
-      <div class="ni"><div class="nn">Laude F</div><div class="ns">Empleado Nirsa</div></div>
+      <div class="ni"><div class="nn">Laude Fernandez</div><div class="ns">Empleado Nirsa</div></div>
       <div class="rd" style="background:#639922"></div>
-    </div><div class="nr" onclick="selN(2)">
-      <div class="si2" style="background:#EEEDFE;color:#3C3489;border:2px solid #7F77DD">FS</div>
-      <div class="ni"><div class="nn">Fernandez Soria</div><div class="ns">Familiar interno</div></div>
-      <div class="rd" style="background:#639922"></div>
-    </div><div class="nr" onclick="selN(3)">
-      <div class="si2" style="background:#EEEDFE;color:#3C3489;border:2px solid #7F77DD">NO</div>
-      <div class="ni"><div class="nn">Notificación online</div><div class="ns">Familiar interno</div></div>
-      <div class="rd" style="background:#639922"></div>
-    </div><div class="nr" onclick="selN(4)">
-      <div class="si2" style="background:#FAECE7;color:#712B13;border:2px solid #D85A30">L</div>
-      <div class="ni"><div class="nn">Lavinia</div><div class="ns">Sospechoso</div></div>
-      <div class="rd" style="background:#639922"></div>
-    </div><div class="nr" onclick="selN(5)">
-      <div class="si2" style="background:#E6F1FB;color:#0C447C;border:2px solid #378ADD">LM</div>
-      <div class="ni"><div class="nn">La Madrina</div><div class="ns">Empleado Nirsa</div></div>
-      <div class="rd" style="background:#E24B4A"></div>
     </div></div>
   </div>
 
   <div class="cw" id="cw">
     <canvas id="cv" width="758" height="540" style="width: 758px; height: 540px;"></canvas>
-    <div class="ecv" id="ecv" style="display:none">
+    <div class="ecv" id="ecv" style="display: none;">
       <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity=".3">
         <circle cx="24" cy="18" r="9" stroke="currentColor" stroke-width="2"></circle>
         <path d="M8 42c0-8.837 7.163-16 16-16s16 7.163 16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
@@ -184,7 +172,7 @@ canvas{display:block;width:100%;height:100%}
   <div class="det">
     <div id="dfw" style="text-align:center;padding:4px 0"><div class="di" style="background:#E6F1FB;color:#0C447C;border:3px solid #378ADD">LF</div></div>
     <div style="text-align:center">
-      <div style="font-size:13px;font-weight:500" id="dn">Laude F</div>
+      <div style="font-size:13px;font-weight:500" id="dn">Laude Fernandez</div>
       <div id="dt" style="margin-top:3px"><span style="background:#E6F1FB;color:#0C447C;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:500">Empleado Nirsa</span></div>
     </div>
     <div><div class="dl">Area / Info</div><div id="dinfo" style="font-size:12px;color:var(--tx2)">-</div></div>
@@ -194,7 +182,7 @@ canvas{display:block;width:100%;height:100%}
     <span style="font-weight:500;color:#639922">Bajo</span>
   </span></div></div>
     <div><div class="dl">Notas</div><div id="dno" style="font-size:11px;color:var(--tx2);line-height:1.5">-</div></div>
-    <div><div class="dl">Vinculos (<span id="dlc">2</span>)</div><div id="dlk" style="font-size:11px;color:var(--tx2)"><div class="cr"><div style="width:22px;height:22px;border-radius:50%;background:#EEEDFE;color:#3C3489;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:500;border:1.5px solid #7F77DD;flex-shrink:0">FS</div><span style="flex:1;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Fernandez</span><span class="rp" style="background:#E1F5EE;color:#085041">Hijo/Padre</span></div><div class="cr"><div style="width:22px;height:22px;border-radius:50%;background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:500;border:1.5px solid #378ADD;flex-shrink:0">LM</div><span style="flex:1;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">La</span><span class="rp" style="background:#EEEDFE;color:#3C3489">Conyuge</span></div></div></div>
+    <div><div class="dl">Vinculos (<span id="dlc">1</span>)</div><div id="dlk" style="font-size:11px;color:var(--tx2)"><div class="cr"><div style="width:22px;height:22px;border-radius:50%;background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:500;border:1.5px solid #378ADD;flex-shrink:0">CA</div><span style="flex:1;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carlos</span><span class="rp" style="background:#FCEBEB;color:#A32D2D">Asoc.delictivo</span></div></div></div>
     <div id="dbt" style="display: flex; flex-direction: column; gap: 5px;">
       <button style="width:100%;font-size:11px" onclick="editS()">Editar persona</button>
       <button style="width:100%;font-size:11px" class="bt" onclick="om('lnk')">+ Vinculo desde aqui</button>
@@ -264,7 +252,7 @@ const FM = {
 // ESTADO
 // ═══════════════════════════════════════════════
 // Si hay datos incrustados (snapshot), usarlos; si no, cargar localStorage
-const SNAPSHOT_DATA = {"casos":{"caso_1774646779053":{"nombre":"Hombre araña","nodes":[{"id":1,"name":"Laude F","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":2,"name":"Fernandez Soria","type":"fin","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":3,"name":"Notificación online","type":"fin","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":4,"name":"Lavinia","type":"ext","info":"lavin","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":5,"name":"La Madrina","type":"emp","info":"","cedula":"","risk":"high","notes":"Puede cobrar y dejarme sin acciones","ant":"","photo":null}],"links":[{"a":"n1","b":"n2","type":"hijo","notes":""},{"a":"n1","b":"n5","type":"conyuge","notes":""}],"nextId":6}}}; // <-- Los datos se inyectan aqui al publicar
+const SNAPSHOT_DATA = {"casos":{"caso_1774842698680":{"nombre":"Prueba","nodes":[{"id":1,"name":"Carlos Arana","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":2,"name":"Laude Fernandez","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null}],"links":[{"a":"n2","b":"n1","type":"delictivo","notes":""}],"nextId":3}}}; // <-- Los datos se inyectan aqui al publicar
 
 let db = {casos:{}};
 let ca = null, sel = null, sbf = 'all';
