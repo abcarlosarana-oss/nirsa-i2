@@ -285,13 +285,8 @@ function load(){
       // Si la BD de Firebase está completamente vacía (primera carga), 
       // inyectamos el caso "Prueba" que tenías originalmente para no perderlo.
       const datosIniciales = {"casos":{"caso_1774842698680":{"nombre":"Prueba","nodes":[{"id":1,"name":"Carlos Arana","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":2,"name":"Laude Fernandez","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":3,"name":"Joaquin Guerra","type":"ext","info":"","cedula":"","risk":"high","notes":"Estafador","ant":"","photo":null}],"links":[{"a":"n2","b":"n1","type":"delictivo","notes":""},{"a":"n3","b":"n1","type":"conyuge","notes":""}],"nextId":4}}};
-      
-      // Inyectamos en la nube
       database.ref('nirsa_data').set(datosIniciales);
-      // ACTUALIZAMOS LA VARIABLE LOCAL 'db'
-      db = datosIniciales; 
-      
-      ssi('inicializado con prueba ✅'); setTimeout(()=>ssi(''), 2000);
+      db = datosIniciales;
     }
 
     // Lógica para mantener el caso activo seleccionado
@@ -363,11 +358,6 @@ function nuevoCaso(){
   const n = prompt('Nombre del caso (ej: Caso Sacon 2024):');
   if(!n || !n.trim()) return;
   const id = 'caso_' + Date.now();
-  
-  // Failsafe: Asegurar que db y db.casos existen
-  if(!db) db = {casos:{}};
-  if(!db.casos) db.casos = {};
-  
   db.casos[id] = {nombre:n.trim(), nodes:[], links:[], nextId:1};
   ca = id; sel = null; pos = {};
   save(); // Al guardar, Firebase emite la actualización para todos
@@ -395,7 +385,6 @@ function delCaso(id, e){
 
 function rTabs(){
   const ct = document.getElementById('ctabs');
-  if(!db || !db.casos) return;
   const ks = Object.keys(db.casos);
   if(!ks.length){
     ct.innerHTML = '<span style="font-size:11px;color:var(--tx3)">Sin casos - crea uno para empezar</span>';
@@ -757,7 +746,6 @@ cv.addEventListener('touchend',()=>{
 
 function rcv(){
   const w=document.getElementById('cw');
-  if(!w) return;
   cv.style.width=w.offsetWidth+'px'; cv.style.height=w.offsetHeight+'px';
   place(); draw();
 }
