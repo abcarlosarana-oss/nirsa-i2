@@ -2,6 +2,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nirsa i2 — Red de Investigacion</title>
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
+
 <style>
 :root{--f:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--bg1:#fff;--bg2:#f5f4f0;--bg3:#eeece6;--tx1:#1a1a18;--tx2:#6b6a64;--tx3:#9c9a92;--bd1:rgba(0,0,0,0.1);--bd2:rgba(0,0,0,0.18);--rm:8px;--rl:12px}
 @media(prefers-color-scheme:dark){:root{--bg1:#1e1e1c;--bg2:#2a2a28;--bg3:#333331;--tx1:#e8e6de;--tx2:#9c9a92;--tx3:#6b6a64;--bd1:rgba(255,255,255,0.1);--bd2:rgba(255,255,255,0.18)}}
@@ -68,13 +71,11 @@ canvas{display:block;width:100%;height:100%}
 .ip{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--bd2);display:none;margin:0 auto}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg1);border:0.5px solid var(--bd2);border-radius:var(--rm);padding:8px 16px;font-size:12px;z-index:30;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;box-shadow:0 2px 12px rgba(0,0,0,.14)}
 .toast.show{opacity:1}
-.snap-info{font-size:10px;background:#E6F1FB;color:#0C447C;padding:4px 10px;border-radius:var(--rm);border:0.5px solid #B5D4F4;max-width:220px;text-align:center;line-height:1.4}
 </style>
 </head>
 <body>
 <div class="app">
 
-<!-- TOPBAR -->
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:8px">
     <svg width="18" height="18" viewBox="0 0 22 22" fill="none">
@@ -90,33 +91,26 @@ canvas{display:block;width:100%;height:100%}
   </div>
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
     <span class="si" id="sind"></span>
-    <button class="bv" onclick="publicarSnapshot()" title="Genera un .html listo para compartir con cualquier persona">💾 Publicar para compartir</button>
+    <button class="bv" onclick="publicarSnapshot()" title="Descargar una copia de seguridad local">💾 Descargar Backup Offline</button>
     <div class="conf">CONFIDENCIAL</div>
   </div>
 </div>
 
-<!-- BARRA CASOS -->
 <div class="caso-bar">
   <span style="font-size:11px;font-weight:500;color:var(--tx2);white-space:nowrap">Caso activo:</span>
-  <div class="ctabs" id="ctabs">
-    <div style="display:inline-flex;align-items:center;gap:3px">
-      <div class="ctab on" onclick="selCaso('caso_1774842698680')">Prueba</div>
-      <div class="cdel" onclick="delCaso('caso_1774842698680',event)" title="Eliminar caso">x</div>
-    </div></div>
+  <div class="ctabs" id="ctabs"></div>
   <button class="bb" onclick="nuevoCaso()">+ Nuevo caso</button>
 </div>
 
-<!-- STATS -->
 <div class="stats">
-  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="se">3</span><span class="sl">emp. Nirsa</span></div><div class="vs"></div>
+  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="se">0</span><span class="sl">emp. Nirsa</span></div><div class="vs"></div>
   <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="sfin" style="color:#534AB7">0</span><span class="sl">fam. internos</span></div><div class="vs"></div>
   <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="sfex" style="color:#27500A">0</span><span class="sl">fam. externos</span></div><div class="vs"></div>
-  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="ss" style="color:#712B13">1</span><span class="sl">sospechosos</span></div><div class="vs"></div>
-  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="slnk">3</span><span class="sl">vinculos</span></div><div class="vs"></div>
-  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="shi" style="color:#E24B4A">1</span><span class="sl">riesgo alto</span></div>
+  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="ss" style="color:#712B13">0</span><span class="sl">sospechosos</span></div><div class="vs"></div>
+  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="slnk">0</span><span class="sl">vinculos</span></div><div class="vs"></div>
+  <div style="display:flex;align-items:baseline;gap:3px"><span class="sn" id="shi" style="color:#E24B4A">0</span><span class="sl">riesgo alto</span></div>
 </div>
 
-<!-- TOOLBAR -->
 <div class="toolbar">
   <input type="text" id="srch" placeholder="Buscar persona..." oninput="filtra(this.value)">
   <button class="bb" onclick="om('emp')">+ Nirsa</button>
@@ -127,10 +121,9 @@ canvas{display:block;width:100%;height:100%}
   <button onclick="resetV()">Reset vista</button>
 </div>
 
-<!-- BODY -->
 <div class="body">
   <div class="sidebar">
-    <div class="sbh">Personas (<span id="nc">4</span>)</div>
+    <div class="sbh">Personas (<span id="nc">0</span>)</div>
     <div class="sbf">
       <div class="sf on" id="fa" onclick="setF('all')">Todos</div>
       <div class="sf" id="fe" onclick="setF('emp')">Nirsa</div>
@@ -138,27 +131,11 @@ canvas{display:block;width:100%;height:100%}
       <div class="sf" id="fx" onclick="setF('fex')">F.Ext</div>
       <div class="sf" id="fss" onclick="setF('ext')">Sosp.</div>
     </div>
-    <div class="nl" id="nl"><div class="nr" onclick="selN(1)">
-      <div class="si2" style="background:#E6F1FB;color:#0C447C;border:2px solid #378ADD">CA</div>
-      <div class="ni"><div class="nn">Carlos Arana</div><div class="ns">Empleado Nirsa</div></div>
-      <div class="rd" style="background:#639922"></div>
-    </div><div class="nr" onclick="selN(2)">
-      <div class="si2" style="background:#E6F1FB;color:#0C447C;border:2px solid #378ADD">LF</div>
-      <div class="ni"><div class="nn">Laude Fernandez</div><div class="ns">Empleado Nirsa</div></div>
-      <div class="rd" style="background:#639922"></div>
-    </div><div class="nr" onclick="selN(3)">
-      <div class="si2" style="background:#FAECE7;color:#712B13;border:2px solid #D85A30">JG</div>
-      <div class="ni"><div class="nn">Joaquin Guerra</div><div class="ns">Sospechoso</div></div>
-      <div class="rd" style="background:#E24B4A"></div>
-    </div><div class="nr" onclick="selN(4)">
-      <div class="si2" style="background:#E6F1FB;color:#0C447C;border:2px solid #378ADD">DG</div>
-      <div class="ni"><div class="nn">Dylan G</div><div class="ns">Empleado Nirsa</div></div>
-      <div class="rd" style="background:#EF9F27"></div>
-    </div></div>
+    <div class="nl" id="nl"></div>
   </div>
 
   <div class="cw" id="cw">
-    <canvas id="cv" width="758" height="540" style="width: 758px; height: 540px;"></canvas>
+    <canvas id="cv"></canvas>
     <div class="ecv" id="ecv" style="display:none">
       <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity=".3">
         <circle cx="24" cy="18" r="9" stroke="currentColor" stroke-width="2"></circle>
@@ -178,27 +155,23 @@ canvas{display:block;width:100%;height:100%}
   </div>
 
   <div class="det">
-    <div id="dfw" style="text-align:center;padding:4px 0"><div class="di" style="background:#FAECE7;color:#712B13;border:3px solid #D85A30">JG</div></div>
+    <div id="dfw" style="text-align:center;padding:4px 0"></div>
     <div style="text-align:center">
-      <div style="font-size:13px;font-weight:500" id="dn">Joaquin Guerra</div>
-      <div id="dt" style="margin-top:3px"><span style="background:#FAECE7;color:#712B13;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:500">Sospechoso</span></div>
+      <div style="font-size:13px;font-weight:500" id="dn">-</div>
+      <div id="dt" style="margin-top:3px"></div>
     </div>
     <div><div class="dl">Area / Info</div><div id="dinfo" style="font-size:12px;color:var(--tx2)">-</div></div>
     <div><div class="dl">Cedula / ID</div><div id="did" style="font-size:12px;color:var(--tx2)">-</div></div>
-    <div><div class="dl">Riesgo</div><div id="dr"><span style="display:inline-flex;align-items:center;gap:5px">
-    <span style="width:8px;height:8px;border-radius:50%;background:#E24B4A;display:inline-block"></span>
-    <span style="font-weight:500;color:#E24B4A">Alto</span>
-  </span></div></div>
-    <div><div class="dl">Notas</div><div id="dno" style="font-size:11px;color:var(--tx2);line-height:1.5">Estafador</div></div>
-    <div><div class="dl">Vinculos (<span id="dlc">1</span>)</div><div id="dlk" style="font-size:11px;color:var(--tx2)"><div class="cr"><div style="width:22px;height:22px;border-radius:50%;background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:500;border:1.5px solid #378ADD;flex-shrink:0">CA</div><span style="flex:1;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Carlos</span><span class="rp" style="background:#EEEDFE;color:#3C3489">Conyuge</span></div></div></div>
-    <div id="dbt" style="display: flex; flex-direction: column; gap: 5px;">
+    <div><div class="dl">Riesgo</div><div id="dr"></div></div>
+    <div><div class="dl">Notas</div><div id="dno" style="font-size:11px;color:var(--tx2);line-height:1.5">-</div></div>
+    <div><div class="dl">Vinculos (<span id="dlc">0</span>)</div><div id="dlk" style="font-size:11px;color:var(--tx2)"></div></div>
+    <div id="dbt" style="display: flex; flex-direction: column; gap: 5px; display:none">
       <button style="width:100%;font-size:11px" onclick="editS()">Editar persona</button>
       <button style="width:100%;font-size:11px" class="bt" onclick="om('lnk')">+ Vinculo desde aqui</button>
     </div>
   </div>
 </div>
 
-<!-- LEYENDA -->
 <div class="leg">
   <span style="font-weight:500;margin-right:2px">Tipos:</span>
   <span class="li"><span class="ld" style="background:#378ADD;border:2px solid #185FA5"></span>Emp. Nirsa</span>
@@ -219,15 +192,28 @@ canvas{display:block;width:100%;height:100%}
 </div>
 
 <div id="mc"></div>
-<div class="toast" id="toast">Vinculo registrado</div>
-</div><!-- .app -->
+<div class="toast" id="toast"></div>
+</div><script>
+// ═══════════════════════════════════════════════
+// INICIALIZACIÓN DE FIREBASE
+// ═══════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyBz-roCpZCvNirU1N0pJ8hbHqxPJnkutgk",
+  authDomain: "nirsa-i2-db.firebaseapp.com",
+  databaseURL: "https://nirsa-i2-db-default-rtdb.firebaseio.com",
+  projectId: "nirsa-i2-db",
+  storageBucket: "nirsa-i2-db.firebasestorage.app",
+  messagingSenderId: "751667218410",
+  appId: "1:751667218410:web:d4dd84f65ebf6bb20c5493"
+};
 
-<script>
+// Inicializamos la app y la base de datos
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
 // ═══════════════════════════════════════════════
 // DATOS Y CONSTANTES
 // ═══════════════════════════════════════════════
-const SK = 'nirsa_i2_PERMANENT';
-
 const RL = {
   conyuge:   {line:'#7F77DD',dash:false,w:3,pill:'#EEEDFE',txt:'#3C3489',label:'Conyuge'},
   hijo:      {line:'#1D9E75',dash:false,w:3,pill:'#E1F5EE',txt:'#085041',label:'Hijo/Padre'},
@@ -259,9 +245,6 @@ const FM = {
 // ═══════════════════════════════════════════════
 // ESTADO
 // ═══════════════════════════════════════════════
-// Si hay datos incrustados (snapshot), usarlos; si no, cargar localStorage
-const SNAPSHOT_DATA = {"casos":{"caso_1774842698680":{"nombre":"Prueba","nodes":[{"id":1,"name":"Carlos Arana","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":2,"name":"Laude Fernandez","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":3,"name":"Joaquin Guerra","type":"ext","info":"","cedula":"","risk":"high","notes":"Estafador","ant":"","photo":null}],"links":[{"a":"n2","b":"n1","type":"delictivo","notes":""},{"a":"n3","b":"n1","type":"conyuge","notes":""}],"nextId":4}}}; // <-- Los datos se inyectan aqui al publicar
-
 let db = {casos:{}};
 let ca = null, sel = null, sbf = 'all';
 let pos = {}, ic = {};
@@ -274,51 +257,52 @@ const cas = () => ca ? db.casos[ca] : null;
 function ssi(t){document.getElementById('sind').textContent = t;}
 
 // ═══════════════════════════════════════════════
-// PERSISTENCIA
+// PERSISTENCIA (EN LA NUBE)
 // ═══════════════════════════════════════════════
 function save(){
   try{
-    localStorage.setItem(SK, JSON.stringify(db));
-    ssi('guardado'); setTimeout(()=>ssi(''), 1800);
+    // Escribimos directamente en la base de datos de Firebase
+    database.ref('nirsa_data').set(db);
+    ssi('guardado en la nube'); setTimeout(()=>ssi(''), 1800);
   } catch(e){
-    ssi('AVISO: usa "Publicar" para no perder datos');
+    ssi('Error al guardar');
   }
 }
 
 function load(){
-  ssi('cargando...');
-  // Si es snapshot con datos incrustados, usarlos (modo solo lectura visual)
-  if(SNAPSHOT_DATA){
-    db = SNAPSHOT_DATA;
-    const ks = Object.keys(db.casos);
-    if(ks.length) ca = ks[0];
-    precargarFotos();
-    ssi('snapshot cargado');
-    setTimeout(()=>ssi(''),2000);
-    rTabs(); rSidebar(); rStats(); rcv();
-    return;
-  }
-  // Cargar localStorage
-  try{
-    const raw = localStorage.getItem(SK);
-    if(raw){
-      const p = JSON.parse(raw);
-      if(p.casos) db = p;
-      else {
-        // Migrar formato anterior
-        const id = 'caso_legacy';
-        db = {casos:{[id]:{nombre:'Datos anteriores',nodes:p.nodes||[],links:p.links||[],nextId:p.nextId||1}}};
-        ca = id;
-      }
-      const ks = Object.keys(db.casos);
-      if(ks.length && !ca) ca = ks[0];
-      precargarFotos();
-      ssi('datos restaurados'); setTimeout(()=>ssi(''), 2000);
+  ssi('conectando a Firebase...');
+  
+  // on('value') crea una suscripción en TIEMPO REAL. 
+  // Cualquier cambio de otro usuario disparará esta función.
+  database.ref('nirsa_data').on('value', (snapshot) => {
+    const data = snapshot.val();
+    
+    if(data) {
+      db = data;
+      if(!db.casos) db.casos = {};
+      ssi('sincronizado ⚡'); setTimeout(()=>ssi(''), 2000);
     } else {
-      ssi('');
+      // Si la BD de Firebase está completamente vacía (primera carga), 
+      // inyectamos el caso "Prueba" que tenías originalmente para no perderlo.
+      const datosIniciales = {"casos":{"caso_1774842698680":{"nombre":"Prueba","nodes":[{"id":1,"name":"Carlos Arana","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":2,"name":"Laude Fernandez","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":3,"name":"Joaquin Guerra","type":"ext","info":"","cedula":"","risk":"high","notes":"Estafador","ant":"","photo":null}],"links":[{"a":"n2","b":"n1","type":"delictivo","notes":""},{"a":"n3","b":"n1","type":"conyuge","notes":""}],"nextId":4}}};
+      database.ref('nirsa_data').set(datosIniciales);
+      db = datosIniciales;
     }
-  } catch(e){ ssi(''); }
-  rTabs(); rSidebar(); rStats(); rcv();
+
+    // Lógica para mantener el caso activo seleccionado
+    const ks = Object.keys(db.casos);
+    if(ks.length) {
+        if(!ca || !db.casos[ca]) ca = ks[0];
+    } else {
+        ca = null;
+    }
+
+    precargarFotos();
+    rTabs(); rSidebar(); rStats(); rcv();
+  }, (error) => {
+    console.error(error);
+    ssi('Error de conexión');
+  });
 }
 
 function precargarFotos(){
@@ -334,35 +318,37 @@ function precargarFotos(){
 }
 
 // ═══════════════════════════════════════════════
-// PUBLICAR SNAPSHOT — genera HTML con datos incrustados
+// PUBLICAR SNAPSHOT — ahora funciona como Backup Offline
 // ═══════════════════════════════════════════════
 function publicarSnapshot(){
-  // Serializar los datos actuales
   const dataStr = JSON.stringify(db);
-  
-  // Leer el HTML actual de la pagina
   const htmlActual = document.documentElement.outerHTML;
   
-  // Reemplazar la linea SNAPSHOT_DATA = null con los datos reales
-  const htmlConDatos = htmlActual.replace(
-    'const SNAPSHOT_DATA = {"casos":{"caso_1774842698680":{"nombre":"Prueba","nodes":[{"id":1,"name":"Carlos Arana","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":2,"name":"Laude Fernandez","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":3,"name":"Joaquin Guerra","type":"ext","info":"","cedula":"","risk":"high","notes":"Estafador","ant":"","photo":null},{"id":4,"name":"Dylan G","type":"emp","info":"","cedula":"","risk":"med","notes":"","ant":"","photo":null}],"links":[{"a":"n2","b":"n1","type":"delictivo","notes":""},{"a":"n3","b":"n1","type":"conyuge","notes":""},{"a":"n4","b":"n3","type":"conyuge","notes":""}],"nextId":5}}};',
-    'const SNAPSHOT_DATA = ' + dataStr + ';'
-  );
+  // Removemos los scripts de firebase del backup offline para que no intente conectarse
+  let htmlLimpio = htmlActual.replace(/<script src="https:\/\/www\.gstatic\.com\/firebasejs.*?<\/script>/g, '');
   
-  // Generar nombre de archivo con fecha y nombre del primer caso
+  // Inyectamos los datos para que funcionen sin internet
+  const inyeccion = `<script>
+    const OFFLINE_DATA = ${dataStr};
+    window.onload = function() {
+        if(typeof db !== 'undefined') { db = OFFLINE_DATA; precargarFotos(); rTabs(); rSidebar(); rStats(); rcv(); }
+    };
+  <\/script>`;
+  
+  htmlLimpio = htmlLimpio.replace('</body>', inyeccion + '\n</body>');
+  
   const cids = Object.keys(db.casos);
   const nombreCaso = cids.length ? db.casos[cids[0]].nombre.replace(/[^a-zA-Z0-9]/g,'_').slice(0,30) : 'nirsa_i2';
   const fecha = new Date().toISOString().slice(0,10);
-  const nombreArchivo = 'nirsa_i2_' + nombreCaso + '_' + fecha + '.html';
+  const nombreArchivo = 'backup_offline_' + nombreCaso + '_' + fecha + '.html';
   
-  // Descargar
-  const blob = new Blob([htmlConDatos], {type:'text/html;charset=utf-8'});
+  const blob = new Blob([htmlLimpio], {type:'text/html;charset=utf-8'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = nombreArchivo;
   a.click();
   
-  toast('Archivo descargado: ' + nombreArchivo + '\nAbrelo en cualquier navegador — ya lleva todos los datos adentro.');
+  toast('Backup descargado: ' + nombreArchivo);
 }
 
 // ═══════════════════════════════════════════════
@@ -374,7 +360,7 @@ function nuevoCaso(){
   const id = 'caso_' + Date.now();
   db.casos[id] = {nombre:n.trim(), nodes:[], links:[], nextId:1};
   ca = id; sel = null; pos = {};
-  save(); rTabs(); rSidebar(); rStats(); draw();
+  save(); // Al guardar, Firebase emite la actualización para todos
   toast('Caso "' + n.trim() + '" creado');
 }
 
@@ -394,7 +380,7 @@ function delCaso(id, e){
   const ks = Object.keys(db.casos);
   ca = ks.length ? ks[0] : null;
   sel = null; pos = {}; ic = {};
-  save(); rTabs(); rSidebar(); rStats(); draw();
+  save(); 
 }
 
 function rTabs(){
@@ -538,7 +524,6 @@ function draw(){
   if(!c||!c.nodes.length)return;
   const sk=sel!==null?nk(sel):null;
 
-  // Dibujar links
   c.links.forEach(l=>{
     const p1=pos[l.a],p2=pos[l.b]; if(!p1||!p2)return;
     const hi=sk&&(l.a===sk||l.b===sk); const r=RL[l.type]||RL.otro;
@@ -547,7 +532,6 @@ function draw(){
     ctx.strokeStyle=r.line+alpha; ctx.lineWidth=hi?r.w+1:r.w;
     if(r.dash)ctx.setLineDash([7,4]); else ctx.setLineDash([]);
     ctx.stroke(); ctx.restore();
-    // Etiqueta sobre la linea
     if(hi||!sk){
       const mx=(p1.x+p2.x)/2, my=(p1.y+p2.y)/2;
       ctx.font='500 10px var(--f)';
@@ -561,7 +545,6 @@ function draw(){
     }
   });
 
-  // Dibujar nodos
   const NR=30;
   c.nodes.forEach(n=>{
     const k=nk(n.id); const p=pos[k]; if(!p)return;
@@ -571,13 +554,10 @@ function draw(){
     const nr=iS?NR+6:NR; const m=TM[n.type]||TM.emp; const img=ic[ca+'_'+n.id];
 
     if(iS){ ctx.beginPath();ctx.arc(p.x,p.y,nr+8,0,Math.PI*2);ctx.fillStyle=m.ring+'22';ctx.fill(); }
-    // Anillo riesgo
     ctx.beginPath();ctx.arc(p.x,p.y,nr+4,0,Math.PI*2);
     ctx.strokeStyle=rc(n.risk)+(dim?'33':iS?'ff':'bb'); ctx.lineWidth=iS?3:2; ctx.stroke();
-    // Anillo tipo
     ctx.beginPath();ctx.arc(p.x,p.y,nr+1,0,Math.PI*2);
     ctx.strokeStyle=m.ring+(dim?'44':'cc'); ctx.lineWidth=2; ctx.stroke();
-    // Foto o iniciales
     ctx.save(); ctx.beginPath();ctx.arc(p.x,p.y,nr,0,Math.PI*2);ctx.clip();
     if(img){ ctx.globalAlpha=dim?0.3:1; ctx.drawImage(img,p.x-nr,p.y-nr,nr*2,nr*2); }
     else{
@@ -587,7 +567,6 @@ function draw(){
       ctx.fillText(ini(n.name),p.x,p.y+1);
     }
     ctx.restore();
-    // Etiqueta nombre
     const bY=p.y+nr+6;
     const dn=n.name.split(' ').slice(0,2).join(' ');
     ctx.font=`${iS?'500 11px':'10px'} var(--f)`;
@@ -598,7 +577,6 @@ function draw(){
     ctx.strokeStyle=m.ring+(dim?'22':'88'); ctx.lineWidth=0.5; ctx.stroke();
     ctx.fillStyle=m.tc+(dim?'55':''); ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillText(dn,p.x,bY+bh/2);
-    // Sub-etiqueta tipo
     ctx.font='9px var(--f)'; ctx.fillStyle=m.color+(dim?'33':'66');
     ctx.fillText({emp:'Nirsa',fin:'F.Interno',fex:'F.Externo',ext:'Sosp.'}[n.type]||'',p.x,bY+bh+11);
     if(iS){ ctx.font='500 10px var(--f)'; ctx.fillStyle='#185FA5'; ctx.fillText('CASO CENTRAL',p.x,p.y-nr-12); }
@@ -630,7 +608,7 @@ function om(type, eid){
       <h3>${e?'Editar':'Nuevo'} - ${fm.title}</h3>
       <p class="hint">${fm.hint}</p>
       ${pp}
-      <div><label>Foto (opcional — se guarda dentro del archivo)</label><input type="file" id="mph" accept="image/*" onchange="prevFoto(this)"></div>
+      <div><label>Foto (opcional)</label><input type="file" id="mph" accept="image/*" onchange="prevFoto(this)"></div>
       <div><label>Nombre completo *</label><input type="text" id="mnm" value="${e?e.name:''}" placeholder="Nombre y apellido"></div>
       <div><label>${fm.il}</label><input type="text" id="minf" value="${e?e.info||'':''}" placeholder="..."></div>
       <div><label>Cedula / ID</label><input type="text" id="mced" value="${e?e.cedula||'':''}" placeholder="Opcional"></div>
@@ -697,16 +675,13 @@ function saveN(type,id){
   if(id!==null && id!=='null'){
     const n=c.nodes.find(x=>x.id===id);
     if(n){ Object.assign(n,{name,type,info,cedula,risk,notes,ant}); if(photo!==null)n.photo=photo; }
-    if(photo){ const img=new Image();img.src=photo;img.onload=()=>{ic[ca+'_'+id]=img;draw();}; }
     toast('Actualizado');
   } else {
     const nid=c.nextId++;
     c.nodes.push({id:nid,name,type,info,cedula,risk,notes,ant,photo:photo||null});
-    if(photo){ const img=new Image();img.src=photo;img.onload=()=>{ic[ca+'_'+nid]=img;draw();}; }
     toast(TM[type].label + ' agregado');
   }
-  cm(); save(); rStats(); rSidebar(); place(); draw();
-  if(id && sel===id) rDet(id);
+  cm(); save();
 }
 
 function delN(id){
@@ -714,9 +689,8 @@ function delN(id){
   const k=nk(id);
   c.nodes=c.nodes.filter(n=>n.id!==id);
   c.links=c.links.filter(l=>l.a!==k&&l.b!==k);
-  delete pos[k]; delete ic[ca+'_'+id];
-  if(sel===id){sel=null;rDet(null);}
-  cm(); save(); rStats(); rSidebar(); draw(); toast('Eliminado');
+  if(sel===id){sel=null;}
+  cm(); save(); toast('Eliminado');
 }
 
 function saveLnk(){
@@ -727,7 +701,7 @@ function saveLnk(){
   if(a===b){toast('Selecciona dos personas distintas');return;}
   if(c.links.find(l=>(l.a===a&&l.b===b)||(l.a===b&&l.b===a))){toast('Ese vinculo ya existe');return;}
   c.links.push({a,b,type,notes:document.getElementById('mln').value.trim()});
-  cm(); save(); rStats(); if(sel!==null)rDet(sel); place(); draw(); toast('Vinculo registrado');
+  cm(); save(); toast('Vinculo registrado');
 }
 
 // ═══════════════════════════════════════════════
@@ -778,6 +752,5 @@ function rcv(){
 window.addEventListener('resize',rcv);
 window.addEventListener('load',()=>{rcv();load();});
 </script>
-
 
 </body></html>
