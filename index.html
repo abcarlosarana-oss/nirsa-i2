@@ -253,7 +253,7 @@ let drag = null, ds = {x:0,y:0}, dm = false;
 const nk  = i => 'n' + i;
 const ini = n => (n||'').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';
 const rc  = r => RK[r]?.color || '#888';
-const cas = () => (ca && db.casos && db.casos[ca]) ? db.casos[ca] : null;
+const cas = () => ca ? db.casos[ca] : null;
 function ssi(t){document.getElementById('sind').textContent = t;}
 
 // ═══════════════════════════════════════════════
@@ -284,19 +284,17 @@ function load(){
     } else {
       // Si la BD de Firebase está completamente vacía (primera carga), 
       // inyectamos el caso "Prueba" que tenías originalmente para no perderlo.
-      db = { casos: {} };
-      ssi('base de datos vacía');
+      const datosIniciales = {"casos":{"caso_1774842698680":{"nombre":"Prueba","nodes":[{"id":1,"name":"Carlos Arana","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":2,"name":"Laude Fernandez","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":3,"name":"Joaquin Guerra","type":"ext","info":"","cedula":"","risk":"high","notes":"Estafador","ant":"","photo":null}],"links":[{"a":"n2","b":"n1","type":"delictivo","notes":""},{"a":"n3","b":"n1","type":"conyuge","notes":""}],"nextId":4}}};
+      database.ref('nirsa_data').set(datosIniciales);
+      db = datosIniciales;
     }
 
     // Lógica para mantener el caso activo seleccionado
-    const ks = Object.keys(db.casos || {});
-
-    if (ks.length > 0) {
-      if (!ca || !db.casos[ca]) {
-        ca = ks[0];
-      }
+    const ks = Object.keys(db.casos);
+    if(ks.length) {
+        if(!ca || !db.casos[ca]) ca = ks[0];
     } else {
-      ca = null;
+        ca = null;
     }
 
     precargarFotos();
