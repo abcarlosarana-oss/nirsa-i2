@@ -62,7 +62,7 @@ canvas{display:block;width:100%;height:100%}
 .leg{display:flex;flex-wrap:wrap;gap:4px 10px;padding:5px 14px;border-top:0.5px solid var(--bd1);background:var(--bg1);font-size:9px;color:var(--tx2);align-items:center}
 .li{display:flex;align-items:center;gap:3px}.ll{width:16px;height:2px}.ld{width:7px;height:7px;border-radius:50%}
 .mb{position:fixed;inset:0;background:rgba(0,0,0,0.38);display:flex;align-items:center;justify-content:center;z-index:20}
-.mo{background:var(--bg1);border:0.5px solid var(--bd2);border-radius:var(--rl);padding:166px;width:320px;display:flex;flex-direction:column;gap:10px;max-height:92vh;overflow-y:auto}
+.mo{background:var(--bg1);border:0.5px solid var(--bd2);border-radius:var(--rl);padding:16px;width:320px;display:flex;flex-direction:column;gap:10px;max-height:92vh;overflow-y:auto}
 .mo h3{font-size:13px;font-weight:500}.mo label{font-size:10px;color:var(--tx2);display:block;margin-bottom:2px}
 .mo input,.mo select,.mo textarea{width:100%;font-size:12px;padding:5px 8px;border:0.5px solid var(--bd2);border-radius:var(--rm);background:var(--bg1);color:var(--tx1);outline:none}
 .mo input[type=file]{padding:3px}.mo textarea{resize:vertical;min-height:44px}
@@ -286,12 +286,10 @@ function load(){
       // inyectamos el caso "Prueba" que tenías originalmente para no perderlo.
       const datosIniciales = {"casos":{"caso_1774842698680":{"nombre":"Prueba","nodes":[{"id":1,"name":"Carlos Arana","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":2,"name":"Laude Fernandez","type":"emp","info":"","cedula":"","risk":"low","notes":"","ant":"","photo":null},{"id":3,"name":"Joaquin Guerra","type":"ext","info":"","cedula":"","risk":"high","notes":"Estafador","ant":"","photo":null}],"links":[{"a":"n2","b":"n1","type":"delictivo","notes":""},{"a":"n3","b":"n1","type":"conyuge","notes":""}],"nextId":4}}};
       
-      // --- CORRECCIÓN CLAVE ---
       // Inyectamos en la nube
       database.ref('nirsa_data').set(datosIniciales);
-      // ACTUALIZAMOS LA VARIABLE LOCAL 'db' (esto faltaba)
+      // ACTUALIZAMOS LA VARIABLE LOCAL 'db'
       db = datosIniciales; 
-      // -------------------------
       
       ssi('inicializado con prueba ✅'); setTimeout(()=>ssi(''), 2000);
     }
@@ -516,7 +514,7 @@ function place(){
     c.nodes.filter(n=>!conn.has(nk(n.id))).forEach((n,i,arr)=>{const k=nk(n.id);if(pos[k])return;const a=(2*Math.PI*i/Math.max(1,arr.length))-Math.PI/2;pos[k]={x:cx+Math.min(W,H)*.47*Math.cos(a),y:cy+Math.min(W,H)*.47*Math.sin(a)};});
   } else {
     const r=Math.min(W,H)*0.38;
-    c.nodes.forEach((n,i)=>{const k=nk(n.id);if(pos[k])return;const a=(2*Math.PI*i/c.nodes.length))-Math.PI/2;pos[k]={x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)};});
+    c.nodes.forEach((n,i)=>{const k=nk(n.id);if(pos[k])return;const a=(2*Math.PI*i/c.nodes.length)-Math.PI/2;pos[k]={x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)};});
   }
 }
 
